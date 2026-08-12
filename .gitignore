@@ -172,3 +172,6 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Phase 4 upstream clone / caches
+.calm_src/
