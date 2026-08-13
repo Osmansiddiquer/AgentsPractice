@@ -121,8 +121,20 @@ first-pass router: high-confidence calls execute on-device, low-confidence ones 
 bigger model. Structured extraction is the standout capability. Confidence gating is not
 optional — it's the mechanism that makes a model this small safe to act on.
 
+## Deeper investigation (5 experiment cycles)
+
+See [`experiments/SUMMARY.md`](experiments/SUMMARY.md) for a 5-cycle empirical study,
+each targeting a question the docs/web can't answer. Highlights:
+- **Cycle 3 (key):** `.complete()` is stateful and deterministic — call `.reset()` between
+  independent requests or accuracy silently drops from 100% to 55%.
+- **Cycle 4:** sharp top-5 retrieval latency threshold (≤5 tools ~75ms/call, ≥6 ~380ms);
+  cost decoupled from catalogue size.
+- **Cycle 5:** robust to typos/multilingual, but ALL-CAPS input is a hard failure
+  (caps words parsed as stock tickers); use `validation.ungrounded` to catch bad args.
+
 ## Files
 - `demo.py` — reproducible script covering tool calling + confidence gating + extraction.
+- `experiments/` — the 5-cycle study: `cN_*.py` scripts + `cN_findings.md` writeups + `SUMMARY.md`.
 
 ## Sources
 - [Needle 2 — Cactus Compute](https://cactuscompute.com/needle)
