@@ -67,6 +67,43 @@ tool-selection accuracy on harder or multi-tool prompts is shaky (parallel-call 
 came back empty). The calibrated confidence is what makes it usable in practice — it knows when
 it doesn't know, which for an on-device escalation-to-cloud design is the right tradeoff.
 
+## Example runs (input → output)
+
+Captured live in this sandbox. Four tools were declared: `get_weather(city)`,
+`send_email(to, subject, body)`, `play_music(artist, song="")`, `get_stock_price(ticker)`.
+
+### Tool calling
+
+| Input | Output (function call) | Confidence |
+|---|---|---|
+| `How's the weather in Cairo?` | `get_weather(city='Cairo')` | **0.868** |
+| `What's the weather like in New York City right now?` | *abstained* | 0.052 |
+| `Play some Miles Davis` | `play_music(artist='Miles Davis')` | 0.086 |
+| `Play the song Bohemian Rhapsody by Queen` | *abstained* | 0.005 |
+| `Email jane@corp.com with subject Lunch and tell her I'll be 10 minutes late` | `send_email(to='jane@corp.com', subject='Lunch', body="I'll be 10 minutes late")` | 0.005 |
+| `What's Apple's stock trading at?` | *abstained* | 0.003 |
+| `How much is TSLA?` | `get_stock_price(ticker='TSLA')` | 0.013 |
+
+Two patterns stand out. When it does fill arguments they're usually correct (the email
+parsed into all three fields; `TSLA` extracted cleanly). And confidence tracks reliability
+sharply — only the clean single-slot weather query scored high (0.87). Anything needing a
+mapping (`Apple`→`AAPL`), multiple args (song + artist), or extra phrasing dropped near zero.
+That low score is the model flagging "don't trust this — escalate."
+
+### Structured extraction
+
+```
+IN : Team sync moved to Thursday at 2:30pm in the Blue Room
+OUT: title='Team sync' day='Thursday' time='2:30pm' location='Blue Room'      (perfect)
+
+IN : Can I get 3 large pepperoni pizzas please
+OUT: item='large pepperoni pizzas' quantity=3 size='large pepperoni pizzas'   (quantity right,
+     but 'size' wrongly copied the whole item instead of 'large')
+```
+
+Well-separated fields (the event) come out spot-on; when fields overlap semantically
+(item vs. size both touching "large"), a 45M/2-bit model smears them.
+
 ## Takeaway
 
 Needle 2 delivers on its pitch: a ~14MB, ~28MB-RAM tool-calling / extraction model that runs
