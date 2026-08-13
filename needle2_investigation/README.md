@@ -2,6 +2,15 @@
 
 Hands-on investigation of **Needle 2**, run locally in this sandbox on 2026-08-13.
 
+> 📌 **Important correction (see `experiments/c3_findings.md`).** Some numbers in the
+> "Example runs" table below were produced by looping `.complete()` on a single engine
+> *without calling `.reset()`* between queries. Needle 2's `.complete()` is **stateful**
+> (256-token sliding window), so those later queries were contaminated by earlier ones,
+> which artificially crushed their confidence and accuracy. **With a `.reset()` between
+> independent requests, this exact model scores 20/20 (100%) on the eval set with median
+> confidence 0.889.** Treat the low-confidence "abstain/escalate" rows below as a
+> demonstration of the state-contamination pitfall, not the model's true ceiling.
+
 ## What it is
 
 **Needle 2** is a new agentic LLM released by **[Cactus Compute](https://cactuscompute.com/needle)** in 2026.

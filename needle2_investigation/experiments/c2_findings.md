@@ -1,3 +1,9 @@
+> ⚠️ **SUPERSEDED BY CYCLE 3.** The premise here — that the paraphrases "failed" — was
+> wrong. They failed only because this harness reused one engine without `.reset()`,
+> contaminating each query with prior context. With a clean state the model gets them all
+> right, so there was nothing for schema tweaks to "rescue." The "45M/2-bit capability
+> ceiling" conclusion below is an artifact. See `c3_findings.md`.
+
 # Cycle 2 — Can schema quality rescue the failed paraphrases?
 
 **Question (not on the web):** Cycle 1 failed ~56% of paraphrased tool calls. Does

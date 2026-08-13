@@ -1,3 +1,9 @@
+> ⚠️ **SUPERSEDED BY CYCLE 3.** The harness here looped `.complete()` on a single
+> engine *without `.reset()`*, so every query was contaminated by prior ones. The real
+> accuracy on this eval is **20/20 (100%)** with a clean state, and confidence *is* well
+> calibrated (median 0.889). The pessimistic conclusions below are a harness artifact —
+> kept for the record. See `c3_findings.md`.
+
 # Cycle 1 — Confidence calibration study
 
 **Question (not on the web):** does Needle 2's reported `confidence` actually

@@ -58,6 +58,10 @@ def main():
         "Turn on the office light",
         "Compose a haiku about the sea",  # out of scope -> should abstain
     ]:
+        # IMPORTANT: .complete() is stateful (256-token sliding window). Reset
+        # between independent requests or history contaminates later ones and
+        # tanks accuracy/confidence. See experiments/c3_findings.md.
+        m.reset()
         r = m.complete(q)
         do = "EXECUTE " if (r["confidence"] >= THRESHOLD and r["function_calls"]) else "ESCALATE"
         print(f"[{do}] conf={r['confidence']:.3f}  {r['function_calls']}  <- {q}")
